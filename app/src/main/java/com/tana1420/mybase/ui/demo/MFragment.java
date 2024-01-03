@@ -1,5 +1,6 @@
 package com.tana1420.mybase.ui.demo;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,11 +19,13 @@ public class MFragment extends BaseFragment<MPresenterImpl> implements MView {
     protected MPresenterImpl getPresenter() {
         return new MPresenterImpl(this);
     }
+
     @Override
     public View setLayoutFragment(LayoutInflater inflater, ViewGroup container) {
         binding = FragmentMBinding.inflate(getLayoutInflater());
         return binding.getRoot();
     }
+
     @Override
     public void initView() {
         if (binding != null) {
@@ -35,7 +38,14 @@ public class MFragment extends BaseFragment<MPresenterImpl> implements MView {
     @Override
     public void setActions() {
         // khoi tao cac event trong ham nay
-        binding.btn.setOnClickListener(view -> presenter.getMPresenter());
+
+        binding.btn.setOnClickListener(view -> {
+            if (activity.checkDoubleClick()) {
+                return;
+            }
+            presenter.getMPresenter();
+            Log.e("TAG", "setActions: ");
+        });
     }
 
     @Override

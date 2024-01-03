@@ -1,5 +1,7 @@
 package com.tana1420.mybase;
 
+import static com.tana1420.mybase.utils.Constants.DURATION_TIME_CLICKABLE;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -10,6 +12,8 @@ import android.net.ConnectivityManager;
 import android.net.Network;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemClock;
+import android.util.Log;
 
 import com.tana1420.mybase.base.loading.LoadingDialog;
 import com.tana1420.mybase.ui.demo.MFragment;
@@ -26,6 +30,9 @@ public class MainActivity extends AppCompatActivity {
     // listen, detect network change
     private ConnectivityManager connectivityManager;
     private ConnectivityManager.NetworkCallback networkCallback;
+
+    // variable check double click
+    private long lastTimeClick = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +86,18 @@ public class MainActivity extends AppCompatActivity {
         if (isLoadingShowing.getAndSet(false)) {
             loadingDialog.dismiss();
         }
+    }
+
+    public boolean checkDoubleClick() {
+        long timeNow = SystemClock.elapsedRealtime();
+        if (timeNow - lastTimeClick >= DURATION_TIME_CLICKABLE) {
+            Log.e("TAG", "checkDoubleClick: false "+ (timeNow - lastTimeClick));
+            lastTimeClick = timeNow;
+            return false;
+        }
+
+        Log.e("TAG", "checkDoubleClick: true "+ (timeNow - lastTimeClick));
+            return true;
     }
 
     public void replaceFragmentAnimation(Fragment fragment) {
