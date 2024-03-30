@@ -1,10 +1,12 @@
 package com.tana1420.mybase.base.fragment;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -12,6 +14,7 @@ import androidx.fragment.app.Fragment;
 import com.tana1420.mybase.MainActivity;
 import com.tana1420.mybase.base.presenterimpl.BasePresenterImpl;
 import com.tana1420.mybase.base.view.BaseView;
+import com.tana1420.mybase.utils.Utils;
 
 public abstract class BaseFragment<T extends BasePresenterImpl> extends Fragment implements BaseView {
 
@@ -39,6 +42,8 @@ public abstract class BaseFragment<T extends BasePresenterImpl> extends Fragment
         activity = (MainActivity) getActivity();
         vFragmentLayout = setLayoutFragment(inflater, container);
         presenter = getPresenter();
+        presenter.setActivity(activity);
+        Utils.touchOutSide(vFragmentLayout, activity);
         return vFragmentLayout;
     }
 
@@ -85,5 +90,38 @@ public abstract class BaseFragment<T extends BasePresenterImpl> extends Fragment
             activity.hideLoading();
         }
     }
+
+
+    public void handleBackPress() {
+        requireActivity().getOnBackPressedDispatcher().addCallback(
+                this,
+                new OnBackPressedCallback(true) {
+                    @Override
+                    public void handleOnBackPressed() {
+
+                        // doan nay co the custom lai
+                        new AlertDialog.Builder(getContext())
+                                .setMessage("Do you want to close app")
+                                .setCancelable(false)
+                                .setNegativeButton("No", (dialogInterface, i) -> dialogInterface.dismiss())
+                                .setPositiveButton("Yes", (dialogInterface, i) -> {
+                                    dialogInterface.dismiss();
+                                    activity.finish();
+                                }).show();
+                    }
+                }
+        );
+    }
+//    public void handleBack( CustomCallBack callBack) {
+//        requireView().setFocusableInTouchMode(true);
+//        requireView().requestFocus();
+//        requireView().setOnKeyListener((view, i, keyEvent) -> {
+//
+//            if (i == KeyEvent.KEYCODE_BACK && keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
+//                callBack
+//            }
+//            return false;
+//        });
+//    }
 
 }
